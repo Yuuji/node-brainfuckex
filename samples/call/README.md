@@ -20,8 +20,8 @@ Now we write 'hw' to the stack (h to S4 and w to S5). This is the filename of th
 The second parameter is 'bf'. We finish the parameters with a EOT (0x04).
 Important: Don't enter a ETX after the last parameter!
 
-Now we have:
-h w ETX b f EOT
+Now we have:<br />
+h w ETX b f EOT <br />
 4 5 6   7 8 9
 
 To run the file, we have to announce the address of the parameters (S4). For this, we have to write the address (4) to S2.
@@ -45,5 +45,5 @@ The parameter (given from call.bf) is at S4 at start.
 Run / Output
 ------
 
-$ node run.js
+$ node run.js<br />
 Hello World, bf!

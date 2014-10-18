@@ -52,7 +52,7 @@ At least write 0x02 to S1 (0x02: run file). And set S0 to 0x01 (do it!).
 After call S0 and S1 will be cleared to 0.
 
 Return
----------
+------
 
 To return the extended mode must be enabled!
 
@@ -76,3 +76,47 @@ To announce the address of the return values (S4 in the sample) you have to writ
 At least write 0x01 to S1 (0x01: return). And set S0 to 0x01 (do it!).
 
 the code will stop after this
+
+
+Open file for reading
+---------------------
+
+To open a file for reading the extended mode must be enabled!
+
+First write the filename to the stack, e.g. S4, followed by a EOT (0x04).
+
+To announce the address of the return values (S4 in the sample) you have to write it (4) to S2.
+
+At least write 0x03 to S1 (0x03: open file for reading). And set S0 to 0x01 (do it!).
+
+Now you can use , for read one char from file.
+
+After call S0 and S1 will be cleared to 0.
+
+Open file for writing
+---------------------
+
+To open a file for writing the extended mode must be enabled!
+
+First write the filename to the stack, e.g. S4, followed by a EOT (0x04).
+
+To announce the address of the return values (S4 in the sample) you have to write it (4) to S2.
+
+At least write 0x04 to S1 (0x04: open file for writing). And set S0 to 0x01 (do it!).
+
+Now you can use . for write one char from file.
+
+After call S0 and S1 will be cleared to 0.
+
+Close file
+---------------------
+
+To close a file pointer (after reading or writing) the extended mode must be enabled!
+
+First write the filename to the stack, e.g. S4, followed by a EOT (0x04).
+
+To announce the address of the return values (S4 in the sample) you have to write it (4) to S2.
+
+At least write 0x05 to S1 (0x05: close file). And set S0 to 0x01 (do it!).
+
+After call S0 and S1 will be cleared to 0.

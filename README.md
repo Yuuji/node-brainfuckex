@@ -47,6 +47,32 @@ Sample with argument:
 To announce the address of the arguments (S4 in the sample) you have to write it (4) to S2.
 Also you always have to announce the address where the return value will be saved to S3. Also if there will be no return value!
 
-At least write 0x01 to S1 (0x01: run file). And set S0 to 0x01 (do it!).
+At least write 0x02 to S1 (0x02: run file). And set S0 to 0x01 (do it!).
 
 After call S0 and S1 will be cleared to 0.
+
+Return
+---------
+
+To return the extended mode must be enabled!
+
+First write the value to the stack, e.g. S4.
+
+If there are more then one return value, you have to set the the address between two values to ETX (0x03). Between every return value there must be a ETX as delimiter. But not after the last return value!
+
+Last finish the return values with a EOT (0x04).
+
+Sample with one return value:
+
+    v a l 1 EOT
+
+Sample with two return values:
+
+    v a l 1 ETX v a l 2 EOT
+
+
+To announce the address of the return values (S4 in the sample) you have to write it (4) to S2.
+
+At least write 0x01 to S1 (0x01: return). And set S0 to 0x01 (do it!).
+
+the code will stop after this

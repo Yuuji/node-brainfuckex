@@ -257,7 +257,13 @@ var bf = function(code, parameters, output, input) {
 				}
 				break;
 			case '.':
-				output(String.fromCharCode(mem[ptr]));
+				if (writeFile !== false) {
+					var buffer = new Buffer(String.fromCharCode(mem[ptr]), 'ascii');
+					fs.writeSync(writeFile, buffer, 0, 1, writeFilePtr);
+					writeFilePtr++;
+				} else {
+					output(String.fromCharCode(mem[ptr]));
+				}
 				break;
 			case ',':
 				if (readFile !== false) {

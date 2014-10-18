@@ -1,11 +1,72 @@
-var bf = function(code, output, input) {
-	var mem = {0:0};
+var fs = require('fs');
+var path = require('path');
+
+var bfrequire = function(filename) {
+	var code = fs.readFileSync(filename).toString();
+	
+	return function(parameters, output, input) {
+		return bf(code, parameters, output, input);
+	};
+}
+
+var bf = function(code, parameters, output, input) {
+	var mem = {0:0, 1:0};
 	var ptr = 0;
 	var inptr = 0;
 	var stepptr = 0;
 	var opening = [];
 
 	var isExtended = false;
+
+	output = output || function(str) {
+			return process.stdout.write(str, 'ascii');
+	};
+
+	parameters = parameters || [];
+
+	if (parameters.length>0) {
+		var pPtr = 4;
+		var first = true;
+		for (var key in parameters) {
+			var param = parameters[key];
+			if (!first) {
+				mem[pPtr] = 0x03;
+				pPtr++;
+			}
+			first = false;
+
+			for (var i = 0; i < param.length; i++) {
+				mem[pPtr] = param.charCodeAt(i);
+				pPtr++;
+			}
+		}
+		
+		mem[pPtr] = 0x04;
+	}
+
+	var getFunctionData = function() {
+		var parameterPtr = mem[2];
+		var returnPtr = mem[3];
+
+		var parameters = [];
+		var parameter = '';
+
+		while (mem[parameterPtr] !== 0x04) {
+			if (mem[parameterPtr] === 0x03) {
+				parameters.push(parameter);
+				parameter = '';
+			} else {
+				parameter += String.fromCharCode(mem[parameterPtr]);
+			}
+			parameterPtr++;
+		}
+		parameters.push(parameter);
+
+		return {
+			parameters: parameters,
+			returnPtr: returnPtr
+		};
+	};
 
 	var step = function() {
 		switch (code[stepptr]) {
@@ -30,12 +91,50 @@ var bf = function(code, output, input) {
 
 				if (ptr===0 && mem[ptr]===1) {
 					switch (mem[ptr+1]) {
-					case 0x1B:	// ESC
+						case 0x1B:	// ESC
 							isExtended = isExtended ? false : true;
 							mem[ptr] = 0;
 							mem[ptr+1] = isExtended ? 1 : 0;
 							break;
+						case 0x02: // run
+						if (isExtended) {
+							var data = getFunctionData();
+							var filename = data.parameters[0];
+							var type = 'js';
+							var parameters = data.parameters.slice(1);
+							if (fs.existsSync(filename)) {
+								if (path.extname === 'bf') {
+									type = 'bf';
+								}
+							} else {
+								if (fs.existsSync(filename + '.bf')) {
+									filename += '.bf';
+									type = 'bf';
+								} else if (fs.existsSync(filename + '.js')) {
+									filename += '.js';
+								} else {
+									throw new error('File not found: ' + filename);
+								}
+							}
+
+							var func;
+							if (type==='bf') {
+								func = bfrequire(filename);
+								parameters = [parameters];
+							} else {
+								func = require(filename);
+							}
+							
+							var returnData = func.apply(this, parameters);
+
+							mem[ptr] = 0;
+							mem[ptr+1] = 0;
+							// todo: implement return
+						}
+						break;
 					}
+
+
 				}
 
 				break;
@@ -117,12 +216,5 @@ var bf = function(code, output, input) {
 
 module.exports = {
 	run: bf,
-	require: function(filename) {
-		var fs = require('fs');
-		var code = fs.readFileSync(filename).toString();
-
-		return function(output, input) {
-			return bf(code, output, input);
-		};
-	}
+	require: bfrequire
 };

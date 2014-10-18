@@ -1,0 +1,21 @@
+{
+  "name": "node-brainfuckex",
+  "description": "Brainfuck extended for node.js",
+  "keywords": [
+    "brainfuck"
+  ],
+  "version": "0.1.0",
+  "author": "Mia Sophie Moeller <m.moeller@bytevision.net>",
+  "license": "GPLv3",
+  "homepage": "https://github.com/yuuji/node-brainfuckex",
+  "main": "./brainfuckex.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yuuji/node-brainfuckex.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yuuji/node-brainfuckex/issues"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}

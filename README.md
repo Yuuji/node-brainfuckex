@@ -17,7 +17,7 @@ First you need to enable the extended modus. First set cell #1 to 0x1B (ESC), th
 To deactivate extended mode do the same.
 
 Sample code to enable: (start with pointer at #0, ends with pointer at #0):
->+[[-]>+++++[<+++++>-]<++<+>-]<
+	>+[[-]>+++++[<+++++>-]<++<+>-]<
 
 Sample code to disable: (start with pointer at #0, ends with pointer at #0):
->+[[-]>+++++[<+++++>-]<++<+>]<
+	>+[[-]>+++++[<+++++>-]<++<+>]<

@@ -27,7 +27,7 @@ Sample code to disable: (start with pointer at #0, ends with pointer at #0):
 Call file
 ---------
 
-To call a file the extended mode must be enabled!
+To call a file the extended mode must be enabled! Every called file will run in sandbox mode (own memory)!
 
 First write the filename (you can ignore the extension if it is .bf oder .js and there is no file with ne filename without the extension) to the stack, e.g. S4.
 

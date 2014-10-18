@@ -96,6 +96,10 @@ var bf = function(code, parameters, output, input) {
 							mem[ptr] = 0;
 							mem[ptr+1] = isExtended ? 1 : 0;
 							break;
+						case 0x01: // return
+							var data = getFunctionData();
+							return data.parameters;
+							break;
 						case 0x02: // run
 						if (isExtended) {
 							var data = getFunctionData();
@@ -129,7 +133,32 @@ var bf = function(code, parameters, output, input) {
 
 							mem[ptr] = 0;
 							mem[ptr+1] = 0;
-							// todo: implement return
+							
+							if (typeof returnData === 'string') {
+								returnData = [returnData];
+							}
+
+							if (typeof returnData === 'object' && returnData.length) {
+								var first = true;
+								var pPtr = data.returnPtr;
+								
+								for (var key in returnData) {
+									var returnValue = returnData[key];
+									
+									if(!first) {
+										mem[pPtr] = 0x03;
+										pPtr++;
+									}
+									first = false;
+
+									for (var i=0; i < returnValue.length; i++) {
+										mem[pPtr] = returnValue.charCodeAt(i);
+										pPtr++;
+									}
+								}
+
+								mem[pPtr] = 0x04;
+							}
 						}
 						break;
 					}
@@ -207,10 +236,16 @@ var bf = function(code, parameters, output, input) {
 				console.log("\n\n");
 		}
 		stepptr++;
+
+		return false;
 	};
 
 	while (stepptr < code.length) {
-		step();
+		var returnValue = step();
+
+		if (returnValue !== false) {
+			return returnValue;
+		}
 	}
 };
 

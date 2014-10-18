@@ -32,7 +32,8 @@ var bf = function(code, output, input) {
 					switch (mem[ptr+1]) {
 					case 0x1B:	// ESC
 							isExtended = isExtended ? false : true;
-							mem[ptr] = mem[ptr+1] = 0;
+							mem[ptr] = 0;
+							mem[ptr+1] = isExtended ? 1 : 0;
 							break;
 					}
 				}
@@ -93,8 +94,7 @@ var bf = function(code, output, input) {
 				console.log('mem:');
 				console.log(mem);
 				console.log('ptr: ' + ptr);
-				console.log('opening:');
-				console.log(opening);
+				console.log('isExtendedMode: ' + isExtended);
 				break;
 		}
 		if (false) {

@@ -180,6 +180,8 @@ var bf = function(code, parameters, output, input) {
 
 							readFile = fs.openSync(filename, 'r');
 							readFilePtr = 0;
+
+							mem[ptr] = mem[ptr+1] = 0;
 							break;
 						case 0x04: // open file for writeing
 							var data = getFunctionData();
@@ -191,6 +193,8 @@ var bf = function(code, parameters, output, input) {
 
 							writeFile = fs.openSync(filename, 'w');
 							writeFilePtr = 0;
+							
+							mem[ptr] = mem[ptr+1] = 0;
 							break;
 						case 0x05: // close file
 							if (readFile) {
@@ -202,6 +206,8 @@ var bf = function(code, parameters, output, input) {
 								fs.closeSync(writeFile);
 								writeFile = false;
 							}
+							
+							mem[ptr] = mem[ptr+1] = 0;
 
 							break;
 					}

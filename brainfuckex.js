@@ -5,6 +5,8 @@ var bf = function(code, output, input) {
 	var stepptr = 0;
 	var opening = [];
 
+	var isExtended = false;
+
 	var step = function() {
 		switch (code[stepptr]) {
 			case '>':
@@ -25,6 +27,16 @@ var bf = function(code, output, input) {
 				} else {
 					mem[ptr]++;
 				}
+
+				if (ptr===0 && mem[ptr]===1) {
+					switch (mem[ptr+1]) {
+					case 0x1B:	// ESC
+							isExtended = isExtended ? false : true;
+							mem[ptr] = mem[ptr+1] = 0;
+							break;
+					}
+				}
+
 				break;
 			case '-':
 				if (mem[ptr]===0) {

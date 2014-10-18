@@ -18,6 +18,11 @@ var bf = function(code, parameters, output, input) {
 
 	var isExtended = false;
 
+	var readFile = false;
+	var readFilePtr = 0;
+	var writeFile = false;
+	var writeFilePtr = 0;
+
 	output = output || function(str) {
 			return process.stdout.write(str, 'ascii');
 	};
@@ -101,66 +106,104 @@ var bf = function(code, parameters, output, input) {
 							return data.parameters;
 							break;
 						case 0x02: // run
-						if (isExtended) {
+							if (isExtended) {
+								var data = getFunctionData();
+								var filename = data.parameters[0];
+								var type = 'js';
+								var parameters = data.parameters.slice(1);
+								if (fs.existsSync(filename)) {
+									if (path.extname === 'bf') {
+										type = 'bf';
+									}
+								} else {
+									if (fs.existsSync(filename + '.bf')) {
+										filename += '.bf';
+										type = 'bf';
+									} else if (fs.existsSync(filename + '.js')) {
+										filename += '.js';
+									} else {
+										throw new error('File not found: ' + filename);
+									}
+								}
+
+								var func;
+								if (type==='bf') {
+									func = bfrequire(filename);
+									parameters = [parameters];
+								} else {
+									func = require(filename);
+								}
+							
+								var returnData = func.apply(this, parameters);
+
+								mem[ptr] = 0;
+								mem[ptr+1] = 0;
+							
+								if (typeof returnData === 'string') {
+									returnData = [returnData];
+								}
+
+								if (typeof returnData === 'object' && returnData.length) {
+									var first = true;
+									var pPtr = data.returnPtr;
+								
+									for (var key in returnData) {
+										var returnValue = returnData[key];
+									
+										if(!first) {
+											mem[pPtr] = 0x03;
+											pPtr++;
+										}
+										first = false;
+
+										for (var i=0; i < returnValue.length; i++) {
+											mem[pPtr] = returnValue.charCodeAt(i);
+											pPtr++;
+										}
+									}
+
+									mem[pPtr] = 0x04;
+								}
+							}
+							break;
+						case 0x03:	// open file for reading
 							var data = getFunctionData();
 							var filename = data.parameters[0];
-							var type = 'js';
-							var parameters = data.parameters.slice(1);
-							if (fs.existsSync(filename)) {
-								if (path.extname === 'bf') {
-									type = 'bf';
-								}
-							} else {
-								if (fs.existsSync(filename + '.bf')) {
-									filename += '.bf';
-									type = 'bf';
-								} else if (fs.existsSync(filename + '.js')) {
-									filename += '.js';
-								} else {
-									throw new error('File not found: ' + filename);
-								}
+
+							if (!fs.existsSync(filename)) {
+								throw new Error('file does not exists: ' + filename);
 							}
 
-							var func;
-							if (type==='bf') {
-								func = bfrequire(filename);
-								parameters = [parameters];
-							} else {
-								func = require(filename);
+							if (readFile !== false) {
+								fs.closeSync(readFile);
+							}
+
+							readFile = fs.openSync(filename, 'r');
+							readFilePtr = 0;
+							break;
+						case 0x04: // open file for writeing
+							var data = getFunctionData();
+							var filename = data.parameters[0];
+
+							if (writeFile !== false) {
+								fs.closeSync(writeFile);
+							}
+
+							writeFile = fs.openSync(filename, 'w');
+							writeFilePtr = 0;
+							break;
+						case 0x05: // close file
+							if (readFile) {
+								fs.closeSync(readFile);
+								readFile = false;
 							}
 							
-							var returnData = func.apply(this, parameters);
-
-							mem[ptr] = 0;
-							mem[ptr+1] = 0;
-							
-							if (typeof returnData === 'string') {
-								returnData = [returnData];
+							if (writeFile) {
+								fs.closeSync(writeFile);
+								writeFile = false;
 							}
 
-							if (typeof returnData === 'object' && returnData.length) {
-								var first = true;
-								var pPtr = data.returnPtr;
-								
-								for (var key in returnData) {
-									var returnValue = returnData[key];
-									
-									if(!first) {
-										mem[pPtr] = 0x03;
-										pPtr++;
-									}
-									first = false;
-
-									for (var i=0; i < returnValue.length; i++) {
-										mem[pPtr] = returnValue.charCodeAt(i);
-										pPtr++;
-									}
-								}
-
-								mem[pPtr] = 0x04;
-							}
-						}
-						break;
+							break;
 					}
 
 
@@ -211,12 +254,25 @@ var bf = function(code, parameters, output, input) {
 				output(String.fromCharCode(mem[ptr]));
 				break;
 			case ',':
-				if (inptr >= input.length) {
-					mem[ptr] = 0;
+				if (readFile !== false) {
+					var buffer=new Buffer(1);
+					var bytes = fs.readSync(readFile, buffer, 0, 1, readFilePtr);
+
+					if (bytes === 0) {
+						mem[ptr] = 0;
+					} else {
+						mem[ptr] = buffer.toString('ascii',0,1).charCodeAt(0);
+					}
+
+					readFilePtr++;
 				} else {
-					mem[ptr] = input.charCodeAt(inptr);
+					if (inptr >= input.length) {
+						mem[ptr] = 0;
+					} else {
+						mem[ptr] = input.charCodeAt(inptr);
+					}
+					inptr++;
 				}
-				inptr++;
 				break;
 			case '#':
 				console.log('mem:');

@@ -25,7 +25,7 @@ var bf = function(code, parameters, output, input, filename) {
 	var tempFile = crypto.createHash('md5').update(code).digest('hex');
 	tempFile = tempDir + '/' + tempFile + '.js';
 	
-	if (!fs.existsSync(tempFile) || 1===1) {
+	if (!fs.existsSync(tempFile)) {
 		var fp = fs.openSync(tempFile, 'w');
 		code = code.replace(/[^-+\.,\[\]<>#]/g,'');
 		

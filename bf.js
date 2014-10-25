@@ -105,17 +105,17 @@ var bf = function() {
 	
 	this.add = function(step) {
 		if (step < 0) {
-			if (mem[ptr]===0) {
+			if ((mem[ptr]-step)<0) {
+				step = step + mem[ptr];
 				mem[ptr] = 0xFF;
-				step++;
 			}
 			
 			mem[ptr]+=step;
 			
 		} else if (step > 0) {
-			if (mem[ptr]===0xFF) {
+			if ((mem[ptr]+step)>0xFF) {
+				step = step - mem[ptr];
 				mem[ptr] = 0;
-				step--;
 			}
 			
 			mem[ptr]+=step;

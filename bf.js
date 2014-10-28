@@ -148,7 +148,7 @@ var bf = function() {
 								} else if (fs.existsSync(filename + '.js')) {
 									filename += '.js';
 								} else {
-									throw new error('File not found: ' + filename);
+									throw new Error('File not found: ' + filename);
 								}
 							}
 						

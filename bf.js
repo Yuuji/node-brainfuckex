@@ -3,7 +3,7 @@ var fs = require('fs');
 
 var bf = function() {
 	var bfe = false;
-	var mem = {0:0, 1:0};
+	var mem = {0:0, 1:0, 2:0, 3:0};
 	var ptr = 0;
 	var inptr = 0;
 	var stepptr = 0;

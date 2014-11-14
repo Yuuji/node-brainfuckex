@@ -155,7 +155,7 @@ var bf = function() {
 							var func;
 							if (type==='bf') {
 								func = bfe.require(filename);
-								parameters = [parameters];
+								parameters = [parameters, output, input];
 							} else {
 								func = require(filename);
 							}

@@ -17,6 +17,7 @@ var bf = function() {
 	var writeFilePtr = 0;
 	
 	var output = false;
+	var input = false;
 	
 	var getFunctionData = function() {
 		var parameterPtr = mem[2];
@@ -48,7 +49,7 @@ var bf = function() {
 			return process.stdout.write(str, 'ascii');
 		};
 		
-		intput = setInput;
+		input = setInput;
 		
 		parameters = parameters || [];
 		

@@ -282,7 +282,12 @@ var bf = function() {
 	
 	this.debug = function () {
 		console.log('mem:');
-		console.log(mem);
+
+		console.log('{');
+		for (var key in mem) {
+			console.log("\t" + key + ': ' + mem[key] + (mem[key]>31 && mem[key]<127 ? "\t\t" + '(' + String.fromCharCode(mem[key]) + ')' : ''));
+		}
+		console.log('}');
 		console.log('ptr: ' + ptr);
 		console.log('isExtendedMode: ' + isExtended);
 	};

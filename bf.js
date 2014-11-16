@@ -1,5 +1,5 @@
-
 var fs = require('fs');
+var path = require('path');
 
 var bf = function() {
 	var bfe = false;

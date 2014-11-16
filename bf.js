@@ -139,7 +139,7 @@ var bf = function() {
 							var type = 'js';
 							var parameters = data.parameters.slice(1);
 							if (fs.existsSync(filename)) {
-								if (path.extname === 'bf') {
+								if (path.extname(filename) === '.bf') {
 									type = 'bf';
 								}
 							} else {

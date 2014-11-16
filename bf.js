@@ -285,7 +285,16 @@ var bf = function() {
 
 		console.log('{');
 		for (var key in mem) {
-			console.log("\t" + key + ': ' + mem[key] + (mem[key]>31 && mem[key]<127 ? "\t\t" + '(' + String.fromCharCode(mem[key]) + ')' : ''));
+			var keyStr = key;
+			keyStr = Array(5 - keyStr.length).join(' ') + keyStr;
+			
+			var dec = mem[key].toString();
+			dec = Array(4 - dec.length).join(' ') + dec;
+
+			var hex = mem[key].toString(16).toUpperCase();
+			hex = (hex.length === 1 ? '0' : '') + hex;
+			
+			console.log("\t" + keyStr + ': ' + dec + ' (0x' + hex + ')' + (mem[key]>31 && mem[key]<127 ? "\t\t" + '(' + String.fromCharCode(mem[key]) + ')' : ''));
 		}
 		console.log('}');
 		console.log('ptr: ' + ptr);

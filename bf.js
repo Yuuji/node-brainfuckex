@@ -1,5 +1,6 @@
 var fs = require('fs');
 var path = require('path');
+var execSync = require('exec-sync');
 
 var bf = function() {
     var bfe = false;
@@ -136,11 +137,13 @@ var bf = function() {
                         if (isExtended) {
                             var data = getFunctionData();
                             var filename = data.parameters[0];
-                            var type = 'js';
+                            var type = 'binary';
                             var parameters = data.parameters.slice(1);
                             if (fs.existsSync(filename)) {
                                 if (path.extname(filename) === '.bf') {
                                     type = 'bf';
+                                } else if (path.extname(filename) === '.js') {
+                                    type = 'js';
                                 }
                             } else {
                                 if (fs.existsSync(filename + '.bf')) {
@@ -148,6 +151,7 @@ var bf = function() {
                                     type = 'bf';
                                 } else if (fs.existsSync(filename + '.js')) {
                                     filename += '.js';
+                                    type = 'js';
                                 } else {
                                     throw new Error('File not found: ' + filename);
                                 }
@@ -157,8 +161,16 @@ var bf = function() {
                             if (type === 'bf') {
                                 func = bfe.require(filename);
                                 parameters = [parameters, output, input];
-                            } else {
+                            } else if (type === 'js') {
                                 func = require(filename);
+                            } else {
+                                func = function(parameters) {
+                                    var cmd = '';
+                                    for (var key in parameters) {
+                                        cmd += '"' + parameters[key] + '" ';
+                                    }
+                                    return execSync(cmd);
+                                };
                             }
 
                             var returnData = func.apply(this, parameters);

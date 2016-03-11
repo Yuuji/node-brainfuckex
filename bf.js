@@ -175,11 +175,15 @@ var bf = function() {
                                     }
                                     
                                     var returnStr;
-                                    
                                     try {
                                         returnStr = execSync(cmd);
                                     } catch (e) {
-                                        returnStr = e.message;
+                                        if (e.message.match(/ENOENT, no such file or directory .*\.stdout/)) {
+                                            // ignore this (no output)
+                                            returnStr = '';
+                                        } else {
+                                            returnStr = e.message;
+                                        }
                                     }
                                     
                                     return returnStr;

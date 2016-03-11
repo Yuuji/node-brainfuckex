@@ -174,7 +174,15 @@ var bf = function() {
                                         cmd += escapeShell(arguments[key]) + ' ';
                                     }
                                     
-                                    return execSync(cmd);
+                                    var returnStr;
+                                    
+                                    try {
+                                        returnStr = execSync(cmd);
+                                    } catch (e) {
+                                        returnStr = e.toString();
+                                    }
+                                    
+                                    return returnStr;
                                 };
                             }
 

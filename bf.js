@@ -2,6 +2,10 @@ var fs = require('fs');
 var path = require('path');
 var execSync = require('exec-sync');
 
+var escapeShell = function(cmd) {
+    return '"' + cmd.replace(/(["'$`\\])/g, '\\$1') + '"';
+};
+
 var bf = function() {
     var bfe = false;
     var mem = {0: 0, 1: 0, 2: 0, 3: 0};
@@ -164,11 +168,12 @@ var bf = function() {
                             } else if (type === 'js') {
                                 func = require(filename);
                             } else {
-                                func = function(parameters) {
-                                    var cmd = '';
-                                    for (var key in parameters) {
-                                        cmd += '"' + parameters[key] + '" ';
+                                func = function() {
+                                    var cmd = escapeShell(filename) + ' ';
+                                    for (var key in arguments) {
+                                        cmd += escapeShell(arguments[key]) + ' ';
                                     }
+                                    
                                     return execSync(cmd);
                                 };
                             }

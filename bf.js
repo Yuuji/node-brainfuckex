@@ -179,7 +179,7 @@ var bf = function() {
                                     try {
                                         returnStr = execSync(cmd);
                                     } catch (e) {
-                                        returnStr = e.toString();
+                                        returnStr = e.message;
                                     }
                                     
                                     return returnStr;

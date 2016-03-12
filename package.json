@@ -16,8 +16,6 @@
   "bugs": {
     "url": "https://github.com/yuuji/node-brainfuckex/issues"
   },
-  "dependencies": {
-      "execSync": ""
-  },
+  "dependencies": {},
   "devDependencies": {}
 }

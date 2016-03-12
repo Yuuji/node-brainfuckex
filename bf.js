@@ -1,9 +1,9 @@
 var fs = require('fs');
 var path = require('path');
-var sh = require('execSync');
+var sh = require('child_process');
 
 var escapeShell = function(cmd) {
-    return '"' + cmd.replace(/(["'$`\\])/g, '\\$1') + '"';
+    return cmd.replace(/(['$`\\])/g, '\\$1');
 };
 
 var bf = function() {
@@ -169,21 +169,17 @@ var bf = function() {
                                 func = require(filename);
                             } else {
                                 func = function() {
-                                    var cmd = escapeShell(filename) + ' ';
+                                    var cmd = escapeShell(filename);
+                                    var options = [];
                                     for (var key in arguments) {
-                                        cmd += escapeShell(arguments[key]) + ' ';
+                                        options.push(escapeShell(arguments[key]));
                                     }
                                     
                                     var returnStr;
                                     try {
-                                        returnStr = sh.exec(cmd).stdout;
+                                        returnStr = sh.execFileSync(cmd, options).toString();
                                     } catch (e) {
-                                        if (e.message.match(/ENOENT, no such file or directory .*\.stdout/)) {
-                                            // ignore this (no output)
-                                            returnStr = '';
-                                        } else {
-                                            returnStr = e.message;
-                                        }
+                                        returnStr = e.message;
                                     }
                                     
                                     return returnStr;

@@ -177,11 +177,11 @@ var bf = function() {
                                     
                                     var returnStr;
                                     try {
-                                        returnStr = sh.execFileSync(cmd, options).toString();
+                                        returnStr = sh.execFileSync(cmd, options, {stdio: 'inherit'}).toString();
                                     } catch (e) {
                                         returnStr = e.message;
                                     }
-                                    
+
                                     return returnStr;
                                 };
                             }

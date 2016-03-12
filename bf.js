@@ -177,7 +177,7 @@ var bf = function() {
                                     
                                     var returnStr;
                                     try {
-                                        returnStr = sh.execFileSync(cmd, options, {stdio: 'inherit'});
+                                        returnStr = sh.execFileSync(cmd, options, {stdio: ['pipe', 'pipe', 'inherit']});
                                         
                                         if (returnStr === null) {
                                             returnStr = '';

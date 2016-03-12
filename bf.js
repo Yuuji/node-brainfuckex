@@ -1,6 +1,6 @@
 var fs = require('fs');
 var path = require('path');
-var execSync = require('exec-sync');
+var sh = require('execSync');
 
 var escapeShell = function(cmd) {
     return '"' + cmd.replace(/(["'$`\\])/g, '\\$1') + '"';
@@ -176,7 +176,7 @@ var bf = function() {
                                     
                                     var returnStr;
                                     try {
-                                        returnStr = execSync(cmd);
+                                        returnStr = sh.exec(cmd).stdout;
                                     } catch (e) {
                                         if (e.message.match(/ENOENT, no such file or directory .*\.stdout/)) {
                                             // ignore this (no output)

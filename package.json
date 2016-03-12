@@ -4,7 +4,7 @@
   "keywords": [
     "brainfuck"
   ],
-  "version": "0.10.3",
+  "version": "0.10.4",
   "author": "Mia Sophie Moeller <m.moeller@bytevision.net>",
   "license": "GPLv3",
   "homepage": "https://github.com/yuuji/node-brainfuckex",
@@ -17,7 +17,7 @@
     "url": "https://github.com/yuuji/node-brainfuckex/issues"
   },
   "dependencies": {
-      "exec-sync": ""
+      "execSync": ""
   },
   "devDependencies": {}
 }

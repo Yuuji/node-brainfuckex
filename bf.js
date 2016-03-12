@@ -177,7 +177,13 @@ var bf = function() {
                                     
                                     var returnStr;
                                     try {
-                                        returnStr = sh.execFileSync(cmd, options, {stdio: 'inherit'}).toString();
+                                        returnStr = sh.execFileSync(cmd, options, {stdio: 'inherit'});
+                                        
+                                        if (returnStr === null) {
+                                            returnStr = '';
+                                        }
+                                        
+                                        returnStr = returnStr.toString();
                                     } catch (e) {
                                         returnStr = e.message;
                                     }
